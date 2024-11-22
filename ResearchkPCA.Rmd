@@ -1,0 +1,94 @@
+---
+title: "Research"
+author: "Thejasvi Dhanireddy"
+date: '2023-07-03'
+output: html_document
+---
+
+
+```{r}
+install.packages('kernlab')
+library(kernlab)
+```
+
+```{r}
+# Creating the kernel object
+kpca_obj <- kpca(pathway.scores, kernel = "polydot")
+
+```
+
+```{r}
+transformed_data <- kpca_obj@rotated
+```
+
+```{r}
+vars <- apply(transformed_data, 2, var)
+vars
+```
+
+```{r}
+var_explained <- vars/sum(vars)
+var_explained
+```
+
+
+```{r}
+#create scree plot
+library(ggplot2)
+```
+
+
+```{r}
+qplot(c(1:3660), transformed_data) + 
+  geom_line() + 
+  xlab("Principal Component") + 
+  ylab("Variance Explained") +
+  ggtitle("Scree Plot") +
+  ylim(0, 1)
+```
+
+
+```{r}
+# Assuming you have already created the kpca_obj using the kpca() function
+
+# Obtain the transformed data
+transformed_data <- kpca_obj@rotated
+
+```
+
+```{r}
+screeplot(transformed_data, type = 'barplot')
+
+```
+
+
+```{r}
+# Assuming transformed_data contains the transformed data from Kernel PCA
+
+# Calculate the covariance matrix of the transformed data
+cov_matrix <- cov(transformed_data)
+
+# Compute the eigenvalues
+eigenvalues <- eigen(cov_matrix)$values
+
+```
+
+```{r}
+# Calculate the proportion of variance explained
+variance_explained <- eigenvalues / sum(eigenvalues)
+
+```
+
+```{r}
+# Plot the scree plot
+barplot(variance_explained, 
+     xlab = "Principal Component", ylab = "Variance Explained",
+     main = "Scree Plot of Transformed Data")
+
+```
+
+
+```{r}
+head(transformed_data)
+```
+

@@ -1,0 +1,88 @@
+---
+title: "ResearchtSNE"
+author: "Thejasvi Dhanireddy"
+date: '2023-07-06'
+output: html_document
+---
+
+```{r}
+# install/loading the packages
+install.packages("Rtsne")
+library(Rtsne)
+```
+
+
+```{r}
+#we need to set a seed to reproduce same results, I picked a random number
+set.seed(40)
+#there's a formula for perplexity, max allowed based on dimensions of our data is 20
+#either 2 or 3 dimensions allowed
+#initial dims based on 9 PC's from our PCA
+Rtsne(pathway.scores, perplexity=20, dims=2, initial_dims = 9)
+```
+
+```{r}
+tsne_out <- Rtsne(pathway.scores, perplexity=20)
+```
+
+```{r}
+#tsne_out$Y
+```
+
+```{r}
+#tsne_plot <- data.frame(x = tsne_out$Y[,1], y = tsne_out$Y[,2])
+t#sne_plot
+```
+
+
+```{r}
+#ggplot(tsne_plot)
+ #    + geom_point(aes(x=x,y=y))
+```
+
+```{r}
+View(Y)
+survival <- as.data.frame(Y)
+survival
+range = ifelse(survival$Y < 50, 
+                  ifelse(survival$Y >= 50 & survival$Y < 200, 2,3), no=0)
+survival$range <- range
+```
+
+
+
+```{r}
+plot(tsne_out$Y, asp=1, xlab = "First Coordinate", ylab = "Second Coordinate",
+     main = "t-SNE Projection onto 2 Dimensions Plot")
+  
+```
+
+```{r}
+install.packages("tsne")
+```
+
+```{r}
+library(tsne)
+```
+
+
+```{r}
+newTsne <- tsne(pathway.scores, initial_config = NULL, k = 9, initial_dims = 30, perplexity = 20, max_iter = 1, min_cost = 0, epoch_callback = NULL, whiten = TRUE,
+epoch=100)
+```
+
+```{r}
+plot(newTsne, asp=1, xlab = "First Coordinate", ylab = "Second Coordinate",
+     main = "t-SNE Projection onto 2 Dimensions Plot")
+```
+
+```{r}
+frob <- function(real_df, reconstructed_df) {
+  sqrt(sum((real_df - reconstructed_df)^2))
+}
+```
+
+```{r}
+frob(pathway.scores, newTsne)
+```
+

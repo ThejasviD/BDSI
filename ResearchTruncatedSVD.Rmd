@@ -1,0 +1,126 @@
+---
+title: "ReasearchTruncatedSVD"
+author: "Thejasvi Dhanireddy"
+date: '2023-07-04'
+output: html_document
+---
+```{r}
+# Assuming you want to retain k singular values/vectors
+scaled <- scale(pathway.scores)
+k <- 9
+truncated_svd <- svd(scaled, nu = k, nv = k)
+
+```
+
+```{r}
+# Assuming you have performed truncated SVD and stored the singular values in 'd'
+barplot(truncated_svd$d, xlab = "Singular Value Index", ylab = "Singular Value",
+     main = "Scree Plot of Singular Values")
+
+```
+
+Singular values (d): The singular values are the square roots of the eigenvalues of the matrix product X'X or XX' (depending on the direction of decomposition). They represent the magnitudes or importance of the corresponding singular vectors. The singular values are arranged in decreasing order.
+
+```{r}
+truncated_svd$d
+```
+```{r}
+sum(truncated_svd$d[1:8]^2)/sum(truncated_svd$d^2)
+```
+
+9 singular values keeps 81.2% of variance
+```{r}
+
+sum(truncated_svd$d[1:9]^2)/sum(truncated_svd$d^2)
+```
+
+```{r}
+sum(truncated_svd$d[1:10]^2)/sum(truncated_svd$d^2)
+```
+
+```{r}
+variance_each = prop.table(truncated_svd$d)
+variance_each
+```
+
+
+Trying to find variance explained by first 9 singular values
+```{r}
+variance.new = (prop.table((truncated_svd$d[1:9])^2))/(prop.table((truncated_svd$d)^2)
+variance.new
+round(sum(variance.new), digits=100)
+```
+
+
+```{r}
+summary(truncated_svd$d[1:9])
+```
+
+Trying to multiply components together to get resulting matrix
+```{r}
+sum(truncated_svd$d * truncated_svd$u[5, ] * truncated_svd$v[2, ])
+```
+
+Start of trying to reconstruct matrix
+
+```{r}
+values <- truncated_svd$d[1:9]
+d <- data.matrix(diag(values))
+u <- data.matrix((truncated_svd$u))
+v <- data.matrix((truncated_svd$v))
+```
+
+```{r}
+transpose <- t(truncated_svd$v)
+dim(transpose)
+
+diagonal<- diag(truncated_svd$d[1:9])
+dim(diagonal)
+
+dim(truncated_svd$u)
+```
+
+```{r}
+dim(u)
+dim(d)
+dim(v)
+```
+
+
+```{r}
+first <- u*truncated_svd$d[1:9]
+dim(first)
+```
+
+
+```{r}
+dim(transpose)
+```
+
+
+```{r}
+first*transpose
+```
+
+
+
+```{r}
+sd <- sd(truncated_svd$d)
+variance_percent <- sd^2 / sum(sd^2) * 100
+variance_percent
+```
+
+Variance Function
+```{r}
+frob <- function(real_df, reconstructed_df) {
+  sqrt(sum((real_df - reconstructed_df)^2))
+}
+```
+
+```{r}
+frob(pathway.scores, new_matrix)
+```
+```{r}
+dim(new_matrix)
+```
+
