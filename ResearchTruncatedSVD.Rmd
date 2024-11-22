@@ -44,7 +44,7 @@ variance_each
 ```
 
 
-Trying to find variance explained by first 9 singular values
+Find variance explained by first 9 singular values
 ```{r}
 variance.new = (prop.table((truncated_svd$d[1:9])^2))/(prop.table((truncated_svd$d)^2)
 variance.new
@@ -61,7 +61,7 @@ Trying to multiply components together to get resulting matrix
 sum(truncated_svd$d * truncated_svd$u[5, ] * truncated_svd$v[2, ])
 ```
 
-Start of trying to reconstruct matrix
+Reconstruct matrix
 
 ```{r}
 values <- truncated_svd$d[1:9]
